@@ -63,6 +63,16 @@
       font-family: inherit; cursor: pointer; margin-top: 0.5rem; letter-spacing: 0.5px;
     }
     .btn-submit:hover { background: #333; }
+    .cuota-info {
+      margin-top: 1.25rem; padding: 1rem 1.1rem;
+      background: #F5F0E8; border-radius: 10px;
+      border-left: 3px solid #1a1a1a;
+    }
+    .cuota-badge {
+      display: inline-block; font-size: 13px; font-weight: 700;
+      color: #1a1a1a; margin-bottom: 6px; letter-spacing: 0.3px;
+    }
+    .cuota-info p { font-size: 13px; color: #555; line-height: 1.6; }
 
     /* CARNET */
     .card-section { display: none; padding: 2rem 1.5rem; background: #F5F0E8; text-align: center; }
@@ -118,7 +128,7 @@
   <!-- HERO -->
   <div class="hero">
     <div class="logo-circle">
-      <img src="img/logo.png" alt="Logo Cineclub Super 8 Rota" />
+      <img src="img/Logo_oficial_vectorizado.jpg" alt="Logo Cineclub Super 8 Rota" />
     </div>
     <div class="brand">CINECLUB</div>
     <div class="brand-sub">Super 8 Rota</div>
@@ -175,7 +185,7 @@
 
   <!-- FORMULARIO -->
   <div class="form-section">
-    <h3>Hazte socio — es gratis</h3>
+    <h3>Hazte socio del Cineclub</h3>
     <div class="field">
       <label for="nombre">Nombre</label>
       <input type="text" id="nombre" placeholder="Tu nombre" />
@@ -189,10 +199,19 @@
       <input type="tel" id="telefono" placeholder="600 000 000" />
     </div>
     <div class="field">
+      <label for="email">Correo electrónico</label>
+      <input type="email" id="email" placeholder="tu@email.com" />
+    </div>
+    <div class="field">
       <label for="pelicula">Género o película favorita</label>
       <input type="text" id="pelicula" placeholder="Ej: Drama, El Padrino, Cine Europeo..." />
     </div>
     <button class="btn-submit" onclick="registrar()">Hacerme socio</button>
+
+    <div class="cuota-info">
+      <span class="cuota-badge">Cuota anual: 20 €</span>
+      <p>El pago se realiza contactando con nosotros directamente o por <strong>Bizum</strong>. Con tu aportación podemos proyectar más películas y mejorar la experiencia para todos. ¡Gracias por ser parte del club! 🎬</p>
+    </div>
   </div>
 
   <!-- CARNET -->
@@ -210,12 +229,11 @@
       </div>
       <div class="card-body">
         <div class="card-logo">
-          <img src="img/logo.png" alt="Logo" />
+          <img src="img/Logo_oficial_vectorizado.jpg" alt="Logo" />
         </div>
         <div class="card-info">
           <div class="card-clubname">CINECLUB SUPER 8 ROTA</div>
           <div class="card-name" id="cardNombre">—</div>
-          <div class="card-num" id="cardNum">N.º SOCIO: —</div>
         </div>
       </div>
       <div class="card-footer">
@@ -229,7 +247,7 @@
 
   <!-- FOOTER -->
   <div class="footer">
-    Cineclub Super 8 Rota · Cine, Cultura y Comunidad · super8rota@gmail.com
+    Cineclub Super 8 Rota · 2026 · super8rota@gmail.com
   </div>
 
   <script>
@@ -243,14 +261,26 @@
       const n = document.getElementById('nombre').value.trim();
       const a = document.getElementById('apellidos').value.trim();
       const t = document.getElementById('telefono').value.trim();
-      if (!n || !a || !t) {
-        alert('Por favor rellena nombre, apellidos y teléfono.');
+      const e = document.getElementById('email').value.trim();
+      const p = document.getElementById('pelicula').value.trim();
+      if (!n || !a || !t || !e) {
+        alert('Por favor rellena nombre, apellidos, teléfono y correo electrónico.');
         return;
       }
       socioNum = genNum();
-      document.getElementById('cardNombre').textContent = n + ' ' + a;
-      document.getElementById('cardNum').textContent = 'N.º SOCIO: ' + socioNum;
+      document.getElementById('cardNombre').textContent = n;
       document.getElementById('cardYear').textContent = new Date().getFullYear();
+
+      // Envío silencioso al Google Form (no abre ventana nueva)
+      const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdXD3inG2c6f4oYbfwXo0JdJb4o8cU0rTnXlEa3ujSlzvo0rg/formResponse';
+      const fd = new FormData();
+      fd.append('entry.761021441', n);
+      fd.append('entry.2116724445', a);
+      fd.append('entry.421822519', t);
+      fd.append('entry.1642985719', e); // ← reemplaza EMAIL por el entry real
+      fd.append('entry.1444591249', p);
+      //fd.append('entry.1317871230', socioNum);
+      fetch(formUrl, { method: 'POST', body: fd, mode: 'no-cors' });
 
       const sec = document.getElementById('cardSection');
       sec.classList.add('show');
@@ -279,17 +309,21 @@
       doc.setLineWidth(0.5);
       doc.circle(14, 27, 10, 'S');
 
-      // Intentar dibujar logo desde img/logo.png
+      // Logo circular en canvas antes de añadir al PDF
       try {
         const img = document.querySelector('.card-logo img');
         const canvas = document.createElement('canvas');
-        canvas.width = 100; canvas.height = 100;
+        const size = 200;
+        canvas.width = size; canvas.height = size;
         const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, 100, 100);
+        ctx.beginPath();
+        ctx.arc(size/2, size/2, size/2, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(img, 0, 0, size, size);
         const dataURL = canvas.toDataURL('image/png');
         doc.addImage(dataURL, 'PNG', 6, 19, 16, 16);
       } catch(e) {
-        // Si no carga, texto de fallback
         doc.setFontSize(5);
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(26, 26, 26);
@@ -305,11 +339,6 @@
       const nombre = document.getElementById('cardNombre').textContent;
       doc.setFontSize(10);
       doc.text(nombre, 30, 28);
-
-      doc.setFontSize(6);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(100, 100, 100);
-      doc.text('N.º SOCIO: ' + socioNum, 30, 35);
 
       // Línea separadora footer
       doc.setLineWidth(0.3);
