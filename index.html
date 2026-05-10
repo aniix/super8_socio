@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cineclub Super 8 Rota — Hazte socio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #F5F0E8; font-family: 'Inter', sans-serif; color: #1a1a1a; }
+
+    /* HERO */
+    .hero { padding: 2.5rem 2rem 1rem; text-align: center; }
+    .logo-circle {
+      width: 110px; height: 110px; margin: 0 auto 1rem;
+      background: #fff; border-radius: 50%; border: 2px solid #1a1a1a;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .logo-circle img { width: 96px; height: 96px; object-fit: contain; }
+    .brand { font-family: 'Bebas Neue', 'Arial Black', sans-serif; font-size: 44px; letter-spacing: 2px; color: #1a1a1a; line-height: 1; }
+    .brand-sub { font-family: 'Bebas Neue', 'Arial Black', sans-serif; font-size: 28px; letter-spacing: 1px; color: #1a1a1a; }
+    .sub { font-size: 11px; letter-spacing: 3px; color: #555; text-transform: uppercase; margin-top: 4px; }
+
+    /* FRANJAS */
+    .stripes { display: flex; height: 14px; }
+    .stripes div { flex: 1; }
+    .stripes2 { display: flex; height: 10px; }
+    .stripes2 div { flex: 1; }
+
+    /* TAGLINE */
+    .tagline { padding: 2rem 2rem 1rem; text-align: center; }
+    .tagline h2 { font-size: 24px; font-weight: 700; margin-bottom: 0.6rem; }
+    .tagline p { font-size: 15px; color: #444; line-height: 1.7; max-width: 500px; margin: 0 auto; }
+
+    /* BENEFICIOS */
+    .benefits {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px; padding: 1rem 1.5rem 2rem;
+    }
+    .benefit {
+      background: #fff; border-radius: 12px; padding: 1.1rem;
+      text-align: center; border: 0.5px solid #ddd;
+    }
+    .benefit .icon { font-size: 24px; margin-bottom: 8px; }
+    .benefit p { font-size: 13px; color: #444; line-height: 1.4; font-weight: 500; }
+
+    /* FORMULARIO */
+    .form-section { background: #fff; padding: 2rem 1.5rem; }
+    .form-section h3 { font-size: 20px; font-weight: 700; margin-bottom: 1.5rem; text-align: center; }
+    .field { margin-bottom: 1rem; }
+    .field label { font-size: 12px; font-weight: 500; color: #555; display: block; margin-bottom: 4px; letter-spacing: 0.5px; text-transform: uppercase; }
+    .field input {
+      width: 100%; padding: 11px 14px; border: 1px solid #ccc;
+      border-radius: 8px; font-size: 15px; font-family: inherit; background: #fafafa;
+    }
+    .field input:focus { outline: 2px solid #1a1a1a; border-color: transparent; }
+    .btn-submit {
+      width: 100%; padding: 14px; background: #1a1a1a; color: #fff;
+      border: none; border-radius: 8px; font-size: 16px; font-weight: 500;
+      font-family: inherit; cursor: pointer; margin-top: 0.5rem; letter-spacing: 0.5px;
+    }
+    .btn-submit:hover { background: #333; }
+
+    /* CARNET */
+    .card-section { display: none; padding: 2rem 1.5rem; background: #F5F0E8; text-align: center; }
+    .card-section.show { display: block; }
+    .card-section h3 { font-size: 18px; margin-bottom: 1.2rem; }
+
+    .card-preview {
+      width: 320px; height: 180px; margin: 0 auto 1rem;
+      background: #F5F0E8; border: 1.5px solid #1a1a1a;
+      border-radius: 14px; overflow: hidden; display: flex; flex-direction: column;
+    }
+    .card-stripe { display: flex; height: 8px; }
+    .card-stripe div { flex: 1; }
+    .card-body { flex: 1; display: flex; align-items: center; padding: 12px 16px; gap: 14px; }
+    .card-logo {
+      width: 60px; height: 60px; background: #fff; border-radius: 50%;
+      border: 1.5px solid #1a1a1a; display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0; overflow: hidden;
+    }
+    .card-logo img { width: 52px; height: 52px; object-fit: contain; }
+    .card-info { text-align: left; }
+    .card-clubname { font-family: 'Bebas Neue', 'Arial Black', sans-serif; font-size: 13px; letter-spacing: 1px; color: #1a1a1a; }
+    .card-name { font-size: 17px; font-weight: 700; color: #1a1a1a; line-height: 1.2; margin-top: 3px; }
+    .card-num { font-size: 11px; color: #666; margin-top: 6px; letter-spacing: 1px; }
+    .card-footer {
+      padding: 6px 16px 8px; display: flex; justify-content: space-between;
+      align-items: center; border-top: 0.5px solid #ccc;
+    }
+    .card-footer span { font-size: 10px; color: #888; letter-spacing: 0.5px; }
+
+    .btn-pdf {
+      display: inline-block; margin-top: 0.5rem; padding: 12px 28px;
+      background: #1a1a1a; color: #fff; border: none; border-radius: 8px;
+      font-size: 15px; font-family: inherit; cursor: pointer; font-weight: 500;
+    }
+    .btn-pdf:hover { background: #333; }
+    .success-msg { font-size: 13px; color: #555; margin-top: 1rem; line-height: 1.6; }
+
+    /* FOOTER */
+    .footer {
+      padding: 1.5rem; text-align: center; font-size: 12px;
+      color: #999; border-top: 0.5px solid #ddd; margin-top: 1rem;
+    }
+
+    @media (max-width: 480px) {
+      .brand { font-size: 36px; }
+      .card-preview { width: 290px; height: 165px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="logo-circle">
+      <img src="img/logo.png" alt="Logo Cineclub Super 8 Rota" />
+    </div>
+    <div class="brand">CINECLUB</div>
+    <div class="brand-sub">Super 8 Rota</div>
+    <div class="sub">Cine · Cultura · Comunidad</div>
+  </div>
+
+  <!-- FRANJA SUPERIOR -->
+  <div class="stripes">
+    <div style="background:#A8D8C8"></div>
+    <div style="background:#F4C3C2"></div>
+    <div style="background:#FAD98E"></div>
+    <div style="background:#B5D3E8"></div>
+    <div style="background:#C9B8E8"></div>
+    <div style="background:#A8D8C8"></div>
+    <div style="background:#F4C3C2"></div>
+  </div>
+
+  <!-- TAGLINE -->
+  <div class="tagline">
+    <h2>¿Todavía no eres socio?</h2>
+    <p>Únete a la familia del Cineclub Super 8 Rota y vive el cine de otra manera. Aquí el cine se siente, se debate y se comparte.</p>
+  </div>
+
+  <!-- BENEFICIOS -->
+  <div class="benefits">
+    <div class="benefit">
+      <div class="icon">🗳️</div>
+      <p>Vota las próximas películas de la programación</p>
+    </div>
+    <div class="benefit">
+      <div class="icon">💬</div>
+      <p>Participa en debates y coloquios exclusivos</p>
+    </div>
+    <div class="benefit">
+      <div class="icon">🎬</div>
+      <p>Accede a encuentros y reuniones del club</p>
+    </div>
+    <div class="benefit">
+      <div class="icon">🔔</div>
+      <p>Información única y antes que nadie</p>
+    </div>
+  </div>
+
+  <!-- FRANJA INFERIOR -->
+  <div class="stripes2">
+    <div style="background:#FAD98E"></div>
+    <div style="background:#A8D8C8"></div>
+    <div style="background:#B5D3E8"></div>
+    <div style="background:#F4C3C2"></div>
+    <div style="background:#C9B8E8"></div>
+    <div style="background:#FAD98E"></div>
+    <div style="background:#A8D8C8"></div>
+  </div>
+
+  <!-- FORMULARIO -->
+  <div class="form-section">
+    <h3>Hazte socio — es gratis</h3>
+    <div class="field">
+      <label for="nombre">Nombre</label>
+      <input type="text" id="nombre" placeholder="Tu nombre" />
+    </div>
+    <div class="field">
+      <label for="apellidos">Apellidos</label>
+      <input type="text" id="apellidos" placeholder="Tus apellidos" />
+    </div>
+    <div class="field">
+      <label for="telefono">Teléfono</label>
+      <input type="tel" id="telefono" placeholder="600 000 000" />
+    </div>
+    <div class="field">
+      <label for="pelicula">Género o película favorita</label>
+      <input type="text" id="pelicula" placeholder="Ej: Drama, El Padrino, Cine Europeo..." />
+    </div>
+    <button class="btn-submit" onclick="registrar()">Hacerme socio</button>
+  </div>
+
+  <!-- CARNET -->
+  <div class="card-section" id="cardSection">
+    <h3>¡Bienvenido al club! Aquí está tu carnet</h3>
+    <div class="card-preview" id="cardPreview">
+      <div class="card-stripe">
+        <div style="background:#A8D8C8"></div>
+        <div style="background:#F4C3C2"></div>
+        <div style="background:#FAD98E"></div>
+        <div style="background:#B5D3E8"></div>
+        <div style="background:#C9B8E8"></div>
+        <div style="background:#A8D8C8"></div>
+        <div style="background:#F4C3C2"></div>
+      </div>
+      <div class="card-body">
+        <div class="card-logo">
+          <img src="img/logo.png" alt="Logo" />
+        </div>
+        <div class="card-info">
+          <div class="card-clubname">CINECLUB SUPER 8 ROTA</div>
+          <div class="card-name" id="cardNombre">—</div>
+          <div class="card-num" id="cardNum">N.º SOCIO: —</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>SOCIO OFICIAL</span>
+        <span id="cardYear"></span>
+      </div>
+    </div>
+    <button class="btn-pdf" onclick="descargarPDF()">⬇ Descargar carnet PDF</button>
+    <p class="success-msg">Tus datos han sido enviados al cineclub.<br>¡Nos vemos en la próxima sesión!</p>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    Cineclub Super 8 Rota · Cine, Cultura y Comunidad · super8rota@gmail.com
+  </div>
+
+  <script>
+    let socioNum = '';
+
+    function genNum() {
+      return 'S8R-' + String(Math.floor(Math.random() * 900) + 100);
+    }
+
+    function registrar() {
+      const n = document.getElementById('nombre').value.trim();
+      const a = document.getElementById('apellidos').value.trim();
+      const t = document.getElementById('telefono').value.trim();
+      if (!n || !a || !t) {
+        alert('Por favor rellena nombre, apellidos y teléfono.');
+        return;
+      }
+      socioNum = genNum();
+      document.getElementById('cardNombre').textContent = n + ' ' + a;
+      document.getElementById('cardNum').textContent = 'N.º SOCIO: ' + socioNum;
+      document.getElementById('cardYear').textContent = new Date().getFullYear();
+
+      const sec = document.getElementById('cardSection');
+      sec.classList.add('show');
+      sec.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function descargarPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [85.6, 54] });
+
+      // Fondo
+      doc.setFillColor(245, 240, 232);
+      doc.rect(0, 0, 85.6, 54, 'F');
+
+      // Franjas
+      const stripes = ['#A8D8C8','#F4C3C2','#FAD98E','#B5D3E8','#C9B8E8','#A8D8C8','#F4C3C2'];
+      const sw = 85.6 / stripes.length;
+      stripes.forEach((c, i) => {
+        const rgb = parseInt(c.slice(1), 16);
+        doc.setFillColor((rgb >> 16) & 255, (rgb >> 8) & 255, rgb & 255);
+        doc.rect(i * sw, 0, sw, 4, 'F');
+      });
+
+      // Círculo logo
+      doc.setDrawColor(26, 26, 26);
+      doc.setLineWidth(0.5);
+      doc.circle(14, 27, 10, 'S');
+
+      // Intentar dibujar logo desde img/logo.png
+      try {
+        const img = document.querySelector('.card-logo img');
+        const canvas = document.createElement('canvas');
+        canvas.width = 100; canvas.height = 100;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, 100, 100);
+        const dataURL = canvas.toDataURL('image/png');
+        doc.addImage(dataURL, 'PNG', 6, 19, 16, 16);
+      } catch(e) {
+        // Si no carga, texto de fallback
+        doc.setFontSize(5);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(26, 26, 26);
+        doc.text('S8R', 14, 28, { align: 'center' });
+      }
+
+      // Texto
+      doc.setFontSize(6);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(26, 26, 26);
+      doc.text('CINECLUB SUPER 8 ROTA', 30, 20);
+
+      const nombre = document.getElementById('cardNombre').textContent;
+      doc.setFontSize(10);
+      doc.text(nombre, 30, 28);
+
+      doc.setFontSize(6);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 100, 100);
+      doc.text('N.º SOCIO: ' + socioNum, 30, 35);
+
+      // Línea separadora footer
+      doc.setLineWidth(0.3);
+      doc.setDrawColor(200, 200, 200);
+      doc.line(4, 47, 81.6, 47);
+
+      doc.setFontSize(5);
+      doc.setTextColor(150, 150, 150);
+      doc.text('SOCIO OFICIAL', 5, 51);
+      doc.text(String(new Date().getFullYear()), 80, 51, { align: 'right' });
+
+      doc.save('carnet_socio_' + socioNum + '.pdf');
+    }
+  </script>
+</body>
+</html>
