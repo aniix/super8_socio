@@ -95,8 +95,7 @@
     .card-logo img { width: 52px; height: 52px; object-fit: contain; }
     .card-info { text-align: left; }
     .card-clubname { font-family: 'Bebas Neue', 'Arial Black', sans-serif; font-size: 13px; letter-spacing: 1px; color: #1a1a1a; }
-    .card-name { font-size: 17px; font-weight: 700; color: #1a1a1a; line-height: 1.2; margin-top: 3px; }
-    .card-num { font-size: 11px; color: #666; margin-top: 6px; letter-spacing: 1px; }
+    .card-name { font-size: 15px; font-weight: 700; color: #1a1a1a; line-height: 1.3; margin-top: 3px; }
     .card-footer {
       padding: 6px 16px 8px; display: flex; justify-content: space-between;
       align-items: center; border-top: 0.5px solid #ccc;
@@ -150,7 +149,7 @@
   <div class="tagline">
     <h2>¿Todavía no eres socio?</h2>
     <p>Únete a la familia del Cineclub Super 8 Rota y vive el cine de otra manera. Aquí el cine se siente, se debate y se comparte.</p>
-      <h2>PRÓXIMA SESIÓN - 8 DE JULIO EN LA SALA SEVERIANO ALONSO (CASA DE LA CULTURA) A LAS 21.00h</h2>
+    <h2>PRÓXIMA SESIÓN - 8 DE JULIO EN LA SALA SEVERIANO ALONSO (CASA DE LA CULTURA) A LAS 21.00h</h2>
   </div>
 
   <!-- BENEFICIOS -->
@@ -252,11 +251,7 @@
   </div>
 
   <script>
-    let socioNum = '';
-
-    function genNum() {
-      return 'S8R-' + String(Math.floor(Math.random() * 900) + 100);
-    }
+    let nombreCompleto = '';
 
     function registrar() {
       const n = document.getElementById('nombre').value.trim();
@@ -268,11 +263,11 @@
         alert('Por favor rellena nombre, apellidos, teléfono.');
         return;
       }
-      socioNum = genNum();
-      document.getElementById('cardNombre').textContent = n;
+
+      nombreCompleto = n + ' ' + a;
+      document.getElementById('cardNombre').textContent = nombreCompleto;
       document.getElementById('cardYear').textContent = new Date().getFullYear();
 
-      // Envío silencioso al Google Form (no abre ventana nueva)
       const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdXD3inG2c6f4oYbfwXo0JdJb4o8cU0rTnXlEa3ujSlzvo0rg/formResponse';
       const fd = new FormData();
       fd.append('entry.761021441', n);
@@ -280,7 +275,6 @@
       fd.append('entry.421822519', t);
       fd.append('entry.699311570', e);
       fd.append('entry.1444591249', p);
-      //fd.append('entry.1317871230', socioNum);
       fetch(formUrl, { method: 'POST', body: fd, mode: 'no-cors' });
 
       const sec = document.getElementById('cardSection');
@@ -337,9 +331,10 @@
       doc.setTextColor(26, 26, 26);
       doc.text('CINECLUB SUPER 8 ROTA', 30, 20);
 
-      const nombre = document.getElementById('cardNombre').textContent;
-      doc.setFontSize(10);
-      doc.text(nombre, 30, 28);
+      // Nombre y apellidos juntos, tamaño adaptado si es largo
+      const fontSize = nombreCompleto.length > 20 ? 8 : 10;
+      doc.setFontSize(fontSize);
+      doc.text(nombreCompleto, 30, 30);
 
       // Línea separadora footer
       doc.setLineWidth(0.3);
@@ -351,7 +346,7 @@
       doc.text('SOCIO OFICIAL', 5, 51);
       doc.text(String(new Date().getFullYear()), 80, 51, { align: 'right' });
 
-      doc.save('carnet_socio_' + socioNum + '.pdf');
+      doc.save('carnet_socio_super8rota.pdf');
     }
   </script>
 </body>
